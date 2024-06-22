@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zadanie nr.99</title>
+    <title>Zadanie testowe</title>
 </head>
 <body>
     <h2>Zadanie testowe nr. 99</h2>
@@ -11,21 +11,19 @@
 <input id="klucz" name="klucz">
 <button onclick="sprawdź_klucz()">Sprawdź Klucz</button>
 <p id="poprawność_klucza"></p>
-<button id="generujBtn"disabled="disabled" onclick="generuj_kod()">Generuj kod</button>
+<button onclick="generuj_kod()">Generuj kod</button>
 <h4>Twój kod potwierdzający wykonanie zadania to:</h4>
 <p id="gotowyKod1"></p>
 <p id="gotowyKod2"></p>
 <br>
-<p id="kadra1"></p>
-<p id="kadra2"></p>
-<br>
 <p id="opis"></p>
- <a href="https://www.google.com/maps"> https://www.google.com/maps</a>
+
 
 
 <script>
-    const numerZadania = 99
+    const numerZadania = 'testowe'
 
+    var body = null;
     var czy_Chrome = null;
     var czy_Lokalizacja = null;
     var czy_Klucz_osobisty = null;
@@ -48,7 +46,7 @@ function lokalizacja(){
 
     const options = {
             enableHighAccuracy: true,
-            timeout:15000,
+            timeout:5000,
             maximumAge:100000 
         };
     
@@ -103,14 +101,11 @@ function sprawdź_klucz(){
     if (czy_Klucz_osobisty==Boolean(true)){
         document.getElementById("poprawność_klucza").innerHTML = "Klucz poprawny!"
         //console.log("klucz poprawny")
-generujBtn.removeAttribute('disabled');
          
     }
     else document.getElementById("poprawność_klucza").innerHTML = "Klucz niepoprawny!"
-
         
 }
-
 function generuj_kod(){
 //console.log(czy_Klucz_osobisty)
 //console.log(czy_Lokalizacja)
@@ -135,14 +130,36 @@ if (czy_wszystkie_wymagania == Boolean(true)){
         document.getElementById("gotowyKod1").innerHTML = zaszyfrowane1;
         document.getElementById("gotowyKod2").innerHTML = zaszyfrowane2;
 
-        document.getElementById("kadra1").innerHTML = 'Tylko na potrzeby testów strony - rozszyfrowana lokalizacja';
-        document.getElementById("kadra2").innerHTML = szyfr2;
 
-        document.getElementById("opis").innerHTML = 'Koordynaty TRZEBA WKLEIĆ w pasek wyszukiwania w mapach Google';
+        fetch("https://sheetdb.io/api/v1/rrgvyq88jokzo", {
+            method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        data: [
+            {
+                'id': "INCREMENT",
+                'czas':"DATETIME",
+                'numerZadania': numerZadania,
+                'kluczOsobisty': kluczOsobisty,
+                'lat': lat,
+                'lon': lon,
+
+
+            
+            }
+        ]
+    })
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
 
         
 
 }else document.getElementById("gotowyKod1").innerHTML = "Brak danych o lokalizacji - zezwól na lokalizację i odśwież stronę!";
+
 }
 
 window.onload = lokalizacja;
