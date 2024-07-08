@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koniec zad. 16</title>
+</head>
+<body>
+    <h2>Koniec zadania!</h2>
+    <h6>Gratuluje, to koniec zadania, pamiętaj aby zapisać wygenerowany kod!</h6>
+    <label for="klucz">Wprowadź swój klucz:</label><br>
+<input id="klucz" name="klucz">
+<button onclick="sprawdź_klucz()">Sprawdź Klucz</button>
+<p id="poprawność_klucza"></p>
+<button onclick="generuj_kod()">Generuj kod</button>
+<h4>Twój kod potwierdzający wykonanie zadania to:</h4>
+<p id="gotowyKod1"></p>
+<p id="gotowyKod2"></p>
+<br>
+<p id="opis"></p>
+
+
+
+<script>
+    const numerZadania = 'xxx'
+
+    var body = null;
+    var czy_Chrome = null;
+    var czy_Lokalizacja = null;
+    var czy_Klucz_osobisty = null;
+    var czy_wszystkie_wymagania = null;
+
+    var lat = '';
+    var lon = '';
+
+    var time = new Date(),
+            dzień=time.getDate(),
+            godzina=time.getHours(),
+            minuta=time.getMinutes();
+
+function lokalizacja(){
+    if (!navigator.geolocation) {
+        throw new error("Brak dostępu do lokalizacji")
+        czy_Lokalizacja = 0
+        //console.log(czy_Lokalizacja)
+    }
+
+    const options = {
+            enableHighAccuracy: true,
+            timeout:5000,
+            maximumAge:100000 
+        };
+    
+    navigator.geolocation.getCurrentPosition(success, error, options);
+    
+        function success(pos) {
+    
+            //console.log(pos)
+
+            czy_Lokalizacja= Boolean(true);
+    
+            lat = pos.coords.latitude;
+            lon = pos.coords.longitude;
+    
+            //console.log(lat);
+            //console.log(lon);
+            //console.log(czy_Lokalizacja);
+            
+    
+        }
+    
+        function error(err) {
+           if (err.code === 1){
+            alert("Musisz zezwolić na lokalizacje!")
+            czy_Lokalizacja = 0
+            console.log("nie ma lokalizacji - brak zgody")
+            //console.log(czy_Lokalizacja)
+           }else{
+            alert("Problem z pozyskaniem lokalizacji")
+            console.log("nie ma lokalizacji - problem techniczny")
+            czy_Lokalizacja = 0
+            //console.log(czy_Lokalizacja)
+           }
+        }
+}
+function sprawdź_klucz(){
+
+    //console.log(lat)
+    //console.log(lon)
+
+    kluczOsobisty = parseInt(document.getElementById("klucz").value);
+    //console.log(kluczOsobisty);
+
+    const klucze = [452167, 839245, 706318, 524970, 163582, 795631, 248759,
+    610934, 387426, 914673, 572840, 396517, 825074, 137896, 609425, 485621,
+    257896, 740392, 182563, 963271, 526417, 349186, 810256, 675893, 314289,
+    732548, 615827, 489163, 276594, 2002, 20021, 20022, 20023]
+    
+    czy_Klucz_osobisty=klucze.includes(kluczOsobisty);
+    //console.log(czy_Klucz_osobisty)
+
+    if (czy_Klucz_osobisty==Boolean(true)){
+        document.getElementById("poprawność_klucza").innerHTML = "Klucz poprawny!"
+        //console.log("klucz poprawny")
+         
+    }
+    else document.getElementById("poprawność_klucza").innerHTML = "Klucz niepoprawny!"
+        
+}
+function generuj_kod(){
+//console.log(czy_Klucz_osobisty)
+//console.log(czy_Lokalizacja)
+
+if (czy_Klucz_osobisty==Boolean(true) && czy_Lokalizacja==Boolean(true)){
+czy_wszystkie_wymagania = Boolean(true)
+}else czy_wszystkie_wymagania = Boolean(false)
+//console.log('wszystkie wymagania =')
+//console.log(czy_wszystkie_wymagania)
+
+if (czy_wszystkie_wymagania == Boolean(true)){
+    let szyfr1 =numerZadania+ ','+`${kluczOsobisty}`+ ','+`${dzień}`+ ','+`${godzina}`+ ':'+`${minuta}`+ ","
+    let szyfr2 =`${lat}`+ '   '+`${lon}`
+        //console.log(szyfr1)
+        //console.log(szyfr2)
+
+        let zaszyfrowane1 =btoa(szyfr1)
+        let zaszyfrowane2 =btoa(szyfr2)
+        //console.log(zaszyfrowane1)
+        //console.log(zaszyfrowane2)
+
+        document.getElementById("gotowyKod1").innerHTML = zaszyfrowane1;
+        document.getElementById("gotowyKod2").innerHTML = zaszyfrowane2;
+
+
+        fetch("https://sheetdb.io/api/v1/rrgvyq88jokzo", {
+            method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        data: [
+            {
+                'id': "INCREMENT",
+                'czas':"DATETIME",
+                'numerZadania': numerZadania,
+                'kluczOsobisty': kluczOsobisty,
+                'lat': lat,
+                'lon': lon,
+
+
+            
+            }
+        ]
+    })
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data));
+
+        
+
+}else document.getElementById("gotowyKod1").innerHTML = "Brak danych o lokalizacji - zezwól na lokalizację i odśwież stronę!";
+
+}
+
+window.onload = lokalizacja;
+</script>
+</body>
+</html>
